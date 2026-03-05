@@ -1,0 +1,101 @@
+student_id,age,gender,education_level,num_prev_attempts,studied_credits,disability,region,avg_score,days_active,forum_posts,resource_clicks,assignment_submissions,video_views,quiz_attempts,final_result
+1001,22,M,A Level or Equivalent,0,60,N,South Region,72,45,12,230,8,95,6,Pass
+1002,35,F,HE Qualification,1,60,N,North Region,45,18,3,80,4,30,2,Fail
+1003,28,M,Lower Than A Level,0,60,Y,East Region,55,30,5,120,6,50,4,Pass
+1004,19,F,A Level or Equivalent,0,120,N,South Region,81,60,20,310,10,120,8,Pass
+1005,42,M,HE Qualification,2,60,N,West Region,38,10,1,40,2,15,1,Withdrawn
+1006,25,F,Lower Than A Level,1,60,N,North Region,61,38,8,175,7,70,5,Pass
+1007,31,M,A Level or Equivalent,0,60,N,South Region,48,22,4,90,4,35,3,Fail
+1008,27,F,HE Qualification,0,60,N,East Region,76,52,15,265,9,100,7,Pass
+1009,23,M,A Level or Equivalent,1,60,Y,West Region,43,15,2,60,3,25,2,Fail
+1010,29,F,Lower Than A Level,0,60,N,South Region,69,42,10,190,8,80,6,Pass
+1011,33,M,HE Qualification,0,120,N,North Region,82,58,18,290,10,115,8,Pass
+1012,21,F,A Level or Equivalent,2,60,N,East Region,35,8,1,30,2,12,1,Withdrawn
+1013,26,M,Lower Than A Level,1,60,Y,West Region,52,28,6,130,5,55,4,Pass
+1014,38,F,HE Qualification,0,60,N,South Region,74,48,14,240,9,95,7,Pass
+1015,24,M,A Level or Equivalent,0,60,N,North Region,46,20,3,85,4,32,3,Fail
+1016,30,F,Lower Than A Level,1,60,N,East Region,63,40,9,180,7,75,5,Pass
+1017,22,M,HE Qualification,0,60,N,West Region,79,55,17,280,10,110,8,Pass
+1018,36,F,A Level or Equivalent,2,60,Y,South Region,40,12,2,50,3,20,2,Fail
+1019,25,M,Lower Than A Level,0,60,N,North Region,57,32,7,145,6,60,4,Pass
+1020,28,F,HE Qualification,1,120,N,East Region,83,62,21,320,11,125,9,Pass
+1021,41,M,A Level or Equivalent,3,60,N,West Region,32,6,0,25,1,10,1,Withdrawn
+1022,23,F,Lower Than A Level,0,60,N,South Region,66,44,11,200,8,85,6,Pass
+1023,27,M,HE Qualification,0,60,N,North Region,71,46,13,220,8,90,7,Pass
+1024,34,F,A Level or Equivalent,1,60,Y,East Region,44,16,2,70,3,28,2,Fail
+1025,20,M,Lower Than A Level,0,60,N,West Region,59,35,8,160,6,65,5,Pass
+1026,29,F,HE Qualification,0,60,N,South Region,77,53,16,270,9,105,7,Pass
+1027,32,M,A Level or Equivalent,2,60,N,North Region,41,13,2,55,3,22,2,Fail
+1028,26,F,Lower Than A Level,0,60,N,East Region,68,43,10,195,8,82,6,Pass
+1029,24,M,HE Qualification,1,60,N,West Region,75,50,15,255,9,98,7,Pass
+1030,37,F,A Level or Equivalent,0,120,N,South Region,84,64,22,330,11,130,9,Pass
+1031,22,M,Lower Than A Level,2,60,Y,North Region,37,9,1,35,2,14,1,Withdrawn
+1032,31,F,HE Qualification,0,60,N,East Region,70,45,12,225,8,92,7,Pass
+1033,25,M,A Level or Equivalent,0,60,N,West Region,47,21,3,88,4,34,3,Fail
+1034,28,F,Lower Than A Level,1,60,N,South Region,62,39,9,178,7,73,5,Pass
+1035,35,M,HE Qualification,0,60,N,North Region,80,57,18,285,10,112,8,Pass
+1036,23,F,A Level or Equivalent,0,60,N,East Region,54,29,5,125,5,52,4,Pass
+1037,30,M,Lower Than A Level,3,60,Y,West Region,33,7,0,28,1,11,1,Withdrawn
+1038,26,F,HE Qualification,1,60,N,South Region,67,41,10,185,7,78,6,Pass
+1039,29,M,A Level or Equivalent,0,120,N,North Region,78,54,16,272,9,107,8,Pass
+1040,33,F,Lower Than A Level,1,60,N,East Region,49,23,4,92,4,37,3,Fail
+1041,21,M,HE Qualification,0,60,N,West Region,73,47,13,232,8,96,7,Pass
+1042,27,F,A Level or Equivalent,2,60,N,South Region,39,11,1,45,2,18,2,Fail
+1043,34,M,Lower Than A Level,0,60,N,North Region,64,41,10,188,7,79,6,Pass
+1044,24,F,HE Qualification,0,60,Y,East Region,76,51,15,260,9,100,7,Pass
+1045,38,M,A Level or Equivalent,1,60,N,West Region,42,14,2,58,3,23,2,Fail
+1046,26,F,Lower Than A Level,0,60,N,South Region,60,36,8,162,6,67,5,Pass
+1047,31,M,HE Qualification,0,60,N,North Region,81,59,19,295,10,117,8,Pass
+1048,22,F,A Level or Equivalent,2,60,Y,East Region,36,8,0,32,2,13,1,Withdrawn
+1049,28,M,Lower Than A Level,1,60,N,West Region,56,31,6,138,6,57,4,Pass
+1050,25,F,HE Qualification,0,120,N,South Region,85,65,23,335,11,132,9,Pass
+1051,40,M,A Level or Equivalent,4,60,N,North Region,30,5,0,20,1,8,0,Withdrawn
+1052,23,F,Lower Than A Level,0,60,N,East Region,65,42,10,192,7,80,6,Pass
+1053,27,M,HE Qualification,0,60,N,West Region,72,46,13,228,8,93,7,Pass
+1054,32,F,A Level or Equivalent,1,60,N,South Region,45,18,3,78,4,31,2,Fail
+1055,20,M,Lower Than A Level,0,60,N,North Region,58,34,7,155,6,63,5,Pass
+1056,29,F,HE Qualification,0,60,N,East Region,77,52,16,268,9,104,7,Pass
+1057,35,M,A Level or Equivalent,2,60,Y,West Region,40,12,1,48,3,19,2,Fail
+1058,24,F,Lower Than A Level,0,60,N,South Region,66,43,10,196,8,83,6,Pass
+1059,28,M,HE Qualification,1,60,N,North Region,74,49,14,245,9,96,7,Pass
+1060,33,F,A Level or Equivalent,0,120,N,East Region,83,63,21,325,11,128,9,Pass
+1061,21,M,Lower Than A Level,3,60,N,West Region,34,7,0,26,1,10,1,Withdrawn
+1062,26,F,HE Qualification,0,60,N,South Region,69,44,11,202,8,86,6,Pass
+1063,30,M,A Level or Equivalent,0,60,N,North Region,47,20,3,86,4,33,3,Fail
+1064,25,F,Lower Than A Level,1,60,Y,East Region,61,38,8,172,7,71,5,Pass
+1065,37,M,HE Qualification,0,60,N,West Region,79,56,17,278,10,109,8,Pass
+1066,23,F,A Level or Equivalent,0,60,N,South Region,53,28,5,122,5,50,4,Pass
+1067,29,M,Lower Than A Level,2,60,N,North Region,43,15,2,62,3,26,2,Fail
+1068,32,F,HE Qualification,0,60,N,East Region,71,46,13,222,8,91,7,Pass
+1069,26,M,A Level or Equivalent,1,60,N,West Region,49,22,4,90,4,36,3,Fail
+1070,24,F,Lower Than A Level,0,60,N,South Region,63,40,9,182,7,76,5,Pass
+1071,39,M,HE Qualification,1,120,N,North Region,82,60,20,305,10,120,8,Pass
+1072,22,F,A Level or Equivalent,2,60,Y,East Region,37,9,1,34,2,13,1,Withdrawn
+1073,27,M,Lower Than A Level,0,60,N,West Region,57,33,7,148,6,61,5,Pass
+1074,31,F,HE Qualification,0,60,N,South Region,76,51,15,258,9,101,7,Pass
+1075,25,M,A Level or Equivalent,0,60,N,North Region,46,19,3,84,4,32,3,Fail
+1076,28,F,Lower Than A Level,1,60,N,East Region,64,41,10,190,7,80,6,Pass
+1077,34,M,HE Qualification,0,60,N,West Region,80,58,18,288,10,114,8,Pass
+1078,23,F,A Level or Equivalent,0,60,N,South Region,54,30,5,128,5,53,4,Pass
+1079,30,M,Lower Than A Level,3,60,Y,North Region,32,6,0,24,1,9,1,Withdrawn
+1080,26,F,HE Qualification,1,60,N,East Region,68,43,11,197,8,83,6,Pass
+1081,29,M,A Level or Equivalent,0,120,N,West Region,78,55,16,275,9,108,8,Pass
+1082,36,F,Lower Than A Level,1,60,N,South Region,50,24,4,95,4,38,3,Fail
+1083,22,M,HE Qualification,0,60,N,North Region,73,48,13,235,8,97,7,Pass
+1084,27,F,A Level or Equivalent,2,60,N,East Region,40,12,2,50,3,20,2,Fail
+1085,33,M,Lower Than A Level,0,60,N,West Region,62,39,9,175,7,73,5,Pass
+1086,24,F,HE Qualification,0,60,Y,South Region,75,50,15,252,9,98,7,Pass
+1087,31,M,A Level or Equivalent,1,60,N,North Region,44,16,2,68,3,27,2,Fail
+1088,25,F,Lower Than A Level,0,60,N,East Region,59,35,8,158,6,65,5,Pass
+1089,28,M,HE Qualification,0,60,N,West Region,77,53,16,270,9,106,7,Pass
+1090,38,F,A Level or Equivalent,0,120,N,South Region,84,64,22,332,11,131,9,Pass
+1091,23,M,Lower Than A Level,4,60,N,North Region,29,4,0,18,1,7,0,Withdrawn
+1092,26,F,HE Qualification,0,60,N,East Region,70,45,12,218,8,90,7,Pass
+1093,30,M,A Level or Equivalent,0,60,N,West Region,48,21,3,87,4,35,3,Fail
+1094,25,F,Lower Than A Level,1,60,N,South Region,61,38,8,170,7,71,5,Pass
+1095,35,M,HE Qualification,0,60,N,North Region,81,59,19,292,10,116,8,Pass
+1096,22,F,A Level or Equivalent,2,60,Y,East Region,36,8,0,30,2,12,1,Withdrawn
+1097,29,M,Lower Than A Level,0,60,N,West Region,55,31,6,135,5,55,4,Pass
+1098,32,F,HE Qualification,1,60,N,South Region,74,49,14,242,9,95,7,Pass
+1099,26,M,A Level or Equivalent,0,60,N,North Region,47,20,3,85,4,33,3,Fail
+1100,24,F,Lower Than A Level,0,60,N,East Region,65,42,10,194,7,81,6,Pass

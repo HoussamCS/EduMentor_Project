@@ -1,0 +1,122 @@
+Python Fundamentals for Machine Learning
+=========================================
+
+PYTHON DATA TYPES
+-----------------
+Python has several built-in data types essential for ML:
+
+- int: Integer numbers (1, 42, -7)
+- float: Decimal numbers (3.14, 2.718)
+- str: Text ("hello", "machine learning")
+- list: Ordered, mutable sequence [1, 2, 3]
+- tuple: Ordered, immutable sequence (1, 2, 3)
+- dict: Key-value pairs {"name": "Alice", "score": 95}
+- set: Unordered unique values {1, 2, 3}
+- bool: True or False
+
+FUNCTIONS
+---------
+Functions are reusable blocks of code defined with the `def` keyword:
+
+def train_model(data, target, n_estimators=100):
+    """
+    Train a Random Forest model.
+    Args:
+        data: Feature matrix
+        target: Labels
+        n_estimators: Number of trees
+    Returns:
+        Trained model
+    """
+    from sklearn.ensemble import RandomForestClassifier
+    model = RandomForestClassifier(n_estimators=n_estimators)
+    model.fit(data, target)
+    return model
+
+LIST COMPREHENSIONS
+-------------------
+A concise way to create lists:
+
+# Traditional loop
+squares = []
+for x in range(10):
+    squares.append(x**2)
+
+# List comprehension (preferred)
+squares = [x**2 for x in range(10)]
+
+# With condition
+even_squares = [x**2 for x in range(10) if x % 2 == 0]
+
+NUMPY ARRAYS
+------------
+NumPy is the foundation of scientific Python. Arrays are faster than lists for numerical operations.
+
+import numpy as np
+
+# Create arrays
+arr = np.array([1, 2, 3, 4, 5])
+matrix = np.array([[1, 2], [3, 4], [5, 6]])
+
+# Shape and dimensions
+print(arr.shape)     # (5,)
+print(matrix.shape)  # (3, 2)
+
+# Operations (vectorized — no loops needed)
+arr * 2          # [2, 4, 6, 8, 10]
+arr + arr        # [2, 4, 6, 8, 10]
+np.mean(arr)     # 3.0
+np.std(arr)      # 1.414
+
+# Slicing
+arr[1:3]         # [2, 3]
+matrix[:, 0]     # First column: [1, 3, 5]
+
+PANDAS DATAFRAMES
+-----------------
+Pandas is the go-to library for data manipulation.
+
+import pandas as pd
+
+# Create DataFrame
+df = pd.DataFrame({
+    'name': ['Alice', 'Bob', 'Charlie'],
+    'score': [92, 78, 85],
+    'passed': [True, True, True]
+})
+
+# Key operations
+df.head()              # First 5 rows
+df.info()              # Data types and null counts
+df.describe()          # Statistical summary
+df['score'].mean()     # Column mean
+df[df['score'] > 80]   # Filter rows
+
+# Handle missing values
+df.isnull().sum()          # Count missing per column
+df.fillna(df.mean())       # Fill with mean
+df.dropna()                # Drop rows with any missing value
+
+# Groupby
+df.groupby('passed')['score'].mean()
+
+ERROR HANDLING
+--------------
+Use try-except to handle errors gracefully:
+
+try:
+    result = risky_operation()
+except ValueError as e:
+    print(f"Value error: {e}")
+except FileNotFoundError:
+    print("File not found — check your path")
+except Exception as e:
+    print(f"Unexpected error: {e}")
+    raise  # Re-raise to see full traceback
+
+COMMON PITFALLS
+---------------
+1. Mutable default arguments: Never use def func(lst=[]) — use def func(lst=None)
+2. Integer division: In Python 3, 7/2 = 3.5. Use 7//2 = 3 for integer division.
+3. Copy vs reference: arr2 = arr does not copy — use arr2 = arr.copy()
+4. Off-by-one errors: range(5) is [0,1,2,3,4], not [1,2,3,4,5]
