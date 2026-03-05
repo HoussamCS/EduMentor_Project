@@ -64,6 +64,7 @@ def chat():
 
         # Call LLM
         logger.info(f"Calling LLM with provider: {Config.LLM_PROVIDER}, API key present: {bool(Config.OPENAI_API_KEY)}")
+        logger.info(f"Context being sent (first 300 chars): {context[:300]}")
         answer = get_llm_answer(RAG_SYSTEM_PROMPT, user_prompt)
         logger.info(f"LLM response received: {answer is not None}")
 

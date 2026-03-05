@@ -10,7 +10,6 @@ import logging
 from pathlib import Path
 
 import chromadb
-from chromadb.config import Settings
 from sentence_transformers import SentenceTransformer
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
@@ -115,8 +114,7 @@ def load_documents(knowledge_base_dir: str) -> list[dict]:
 def get_chroma_client():
     """Initialize and return a ChromaDB client."""
     return chromadb.PersistentClient(
-        path=Config.CHROMA_PERSIST_DIR,
-        settings=Settings(anonymized_telemetry=False)
+        path=Config.CHROMA_PERSIST_DIR
     )
 
 

@@ -16,14 +16,12 @@ logger = logging.getLogger(__name__)
 # Try to import ChromaDB (may fail on Python 3.14+)
 try:
     import chromadb
-    from chromadb.config import Settings
     from sentence_transformers import SentenceTransformer
     CHROMADB_AVAILABLE = True
 except Exception as e:
     logger.warning(f"ChromaDB not available: {e}. Using fallback search.")
     CHROMADB_AVAILABLE = False
     chromadb = None
-    Settings = None
     SentenceTransformer = None
 
 # Singleton model and client to avoid reloading
@@ -48,8 +46,7 @@ def get_collection():
         return None
     if _collection is None:
         _chroma_client = chromadb.PersistentClient(
-            path=Config.CHROMA_PERSIST_DIR,
-            settings=Settings(anonymized_telemetry=False)
+            path=Config.CHROMA_PERSIST_DIR
         )
         try:
             _collection = _chroma_client.get_collection(Config.CHROMA_COLLECTION_NAME)
@@ -62,7 +59,7 @@ def get_collection():
 
 def fallback_keyword_search(query: str, top_k: int = 5) -> dict:
     """
-    Simple keyword-based search through knowledge base files.
+    Improved keyword-based search through knowledge base files.
     Used when ChromaDB is not available.
     """
     kb_dir = Path(Config.KNOWLEDGE_BASE_DIR)
@@ -70,7 +67,17 @@ def fallback_keyword_search(query: str, top_k: int = 5) -> dict:
         return {"chunks": [], "sources": [], "found": False}
     
     query_lower = query.lower()
-    query_words = set(query_lower.split())
+    
+    # Remove common stop words
+    stop_words = {'what', 'is', 'are', 'in', 'the', 'a', 'an', 'to', 'of', 'for', 'on', 'at', 
+                  'how', 'why', 'when', 'where', 'can', 'do', 'does', 'i', 'you', 'me', 'my',
+                  'about', 'with', 'that', 'this', 'it', 'be', 'by', 'or', 'and'}
+    
+    # Extract important keywords
+    query_words = [word.strip('?,!.') for word in query_lower.split() if word.strip('?,!.') not in stop_words]
+    
+    if not query_words:
+        return {"chunks": [], "sources": [], "found": False}
     
     results = []
     
@@ -81,31 +88,47 @@ def fallback_keyword_search(query: str, top_k: int = 5) -> dict:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                     content = f.read()
                     content_lower = content.lower()
+                    filename_lower = file_path.stem.lower()
                     
-                    # Check if any query words appear in the file
-                    if any(word in content_lower for word in query_words):
-                        # Split into paragraphs/sections
-                        paragraphs = [p.strip() for p in content.split('\n\n') if p.strip()]
+                    # Calculate file-level relevance score
+                    file_score = sum(2 if word in filename_lower else 0 for word in query_words)
+                    
+                    # Split into paragraphs/sections
+                    paragraphs = [p.strip() for p in content.split('\n\n') if p.strip()]
+                    
+                    for para in paragraphs:
+                        para_lower = para.lower()
                         
-                        for para in paragraphs:
-                            para_lower = para.lower()
-                            # Count matching words
-                            matches = sum(1 for word in query_words if word in para_lower)
-                            if matches > 0:
-                                results.append({
-                                    'text': para,
-                                    'source': file_path.name,
-                                    'matches': matches
-                                })
+                        # Count keyword matches with different weights
+                        match_score = 0
+                        for word in query_words:
+                            if word in para_lower:
+                                # Exact word boundary match gets higher score
+                                if f" {word} " in f" {para_lower} ":
+                                    match_score += 3
+                                else:
+                                    match_score += 1
+                        
+                        if match_score > 0:
+                            results.append({
+                                'text': para,
+                                'source': file_path.name,
+                                'score': match_score + file_score
+                            })
+                            
             except Exception as e:
                 logger.warning(f"Error reading {file_path}: {e}")
     
-    # Sort by number of matches and take top_k
-    results.sort(key=lambda x: x['matches'], reverse=True)
+    # Sort by score and take top_k
+    results.sort(key=lambda x: x['score'], reverse=True)
     top_results = results[:top_k]
     
     chunks = [r['text'][:700] for r in top_results]  # Limit chunk size
     sources = list(set(r['source'] for r in top_results))
+    
+    logger.info(f"Fallback search found {len(chunks)} chunks from sources: {sources}")
+    if chunks:
+        logger.info(f"First chunk preview: {chunks[0][:200]}...")
     
     return {
         "chunks": chunks,

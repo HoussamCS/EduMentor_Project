@@ -63,7 +63,7 @@ function MainApp() {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col relative ${darkMode ? "" : "bg-gray-50"}`}>
+    <div className={`h-screen flex flex-col relative overflow-hidden ${darkMode ? "" : "bg-gray-50"}`}>
       {/* Background Decorative Shapes */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <svg className="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -135,7 +135,7 @@ function MainApp() {
       <header className={`${darkMode ? "bg-gray-900/80 backdrop-blur-lg border-indigo-500/20" : "bg-white border-gray-200"} border-b sticky top-0 z-10 ${darkMode ? "shadow-lg shadow-indigo-500/10" : ""}`}>
         <div className="w-full px-4">
           {/* Brand */}
-          <div className={`flex items-center justify-between py-3 border-b ${darkMode ? "border-indigo-500/20" : "border-gray-100"}`}>
+          <div className={`flex items-center justify-between py-3 border-b ${darkMode ? "border-indigo-500/20 bg-gray-900/40" : "border-gray-100 bg-gray-50/50"}`}>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg">
                 <span className="text-2xl">🎓</span>
@@ -182,7 +182,7 @@ function MainApp() {
           </div>
 
           {/* Tabs */}
-          <nav className="flex justify-center gap-10">
+          <nav className={`flex justify-center gap-10 ${darkMode ? "bg-gray-800/60" : "bg-white"}`}>
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -204,7 +204,7 @@ function MainApp() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 w-full flex flex-col px-4 py-3 relative z-10" style={{ height: "calc(100vh - 115px)" }}>
+      <main className="flex-1 w-full overflow-hidden flex flex-col px-4 py-3 relative z-10">
         <div className="flex-1 overflow-hidden flex flex-col bg-white dark:bg-gray-50 rounded-2xl border dark:border-indigo-400/30 max-w-[89%] mx-auto w-full" style={{ boxShadow: darkMode ? '0 25px 50px -12px rgba(99, 102, 241, 0.3), 0 0 0 1px rgba(99, 102, 241, 0.1)' : '0 20px 40px -10px rgba(0, 0, 0, 0.25), 0 10px 25px -5px rgba(0, 0, 0, 0.15)' }}>
           {activeTab === "chat" && <Chat />}
           {activeTab === "exercise" && <Exercise />}
