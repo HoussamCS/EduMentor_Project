@@ -3,8 +3,8 @@ nixPkgs = ["python311"]
 
 [phases.install]
 cmds = [
-  "pip install --break-system-packages --no-cache-dir flask==3.0.0 flask-cors==4.0.0 python-dotenv==1.0.0 pyjwt==2.8.0 openai==1.10.0 gunicorn==21.2.0 werkzeug==3.0.1",
-  "pip install --break-system-packages --no-cache-dir --only-binary :all: scikit-learn==1.4.0 pandas==2.1.4 numpy==1.26.3 joblib==1.3.2"
+  "python3 -m pip install --break-system-packages --no-cache-dir flask==3.0.0 flask-cors==4.0.0 python-dotenv==1.0.0 pyjwt==2.8.0 openai==1.10.0 gunicorn==21.2.0 werkzeug==3.0.1",
+  "python3 -m pip install --break-system-packages --no-cache-dir --only-binary :all: scikit-learn==1.4.0 pandas==2.1.4 numpy==1.26.3 joblib==1.3.2"
 ]
 
 [start]
