@@ -1,1 +1,1 @@
-web: cd backend && python3 app.py
+web: cd backend && gunicorn -w 2 -b 0.0.0.0:$PORT 'app:create_app()'
