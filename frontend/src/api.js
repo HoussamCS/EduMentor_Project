@@ -29,6 +29,21 @@ export const api = {
       body: JSON.stringify({ question }),
     }).then(handleResponse),
 
+  chatWithFiles: (question, files = []) => {
+    const formData = new FormData();
+    if (question) {
+      formData.append("question", question);
+    }
+    files.forEach(file => {
+      formData.append("files", file);
+    });
+    return fetch(`${BASE_URL}/chat`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: formData,
+    }).then(handleResponse);
+  },
+
   ingest: () =>
     fetch(`${BASE_URL}/ingest`, { 
       method: "POST",

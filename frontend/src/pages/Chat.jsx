@@ -23,6 +23,18 @@ const MessageBubble = ({ message }) => {
         >
           {message.content}
         </div>
+        {message.files && message.files.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1">
+            {message.files.map((file, i) => (
+              <span
+                key={i}
+                className="text-xs bg-indigo-50 dark:bg-indigo-100 text-indigo-600 dark:text-indigo-700 border border-indigo-200 dark:border-indigo-300 px-2 py-0.5 rounded-full"
+              >
+                📎 {file}
+              </span>
+            ))}
+          </div>
+        )}
         {message.sources && message.sources.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1">
             <span className="text-xs text-gray-400 dark:text-gray-500">Sources:</span>
@@ -96,7 +108,9 @@ export default function Chat() {
   });
   const [input, setInput] = useState("");
   const [recognizing, setRecognizing] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const recognitionRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // Voice recognition setup
   useEffect(() => {
@@ -159,9 +173,18 @@ export default function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files);
+    setUploadedFiles(prev => [...prev, ...files]);
+  };
+
+  const removeFile = (index) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
   const sendMessage = async () => {
     const question = input.trim();
-    if (!question || loading) return;
+    if ((!question && uploadedFiles.length === 0) || loading) return;
 
     setError("");
     setInput("");
@@ -169,7 +192,8 @@ export default function Chat() {
     const userMsg = {
       id: Date.now(),
       role: "user",
-      content: question,
+      content: question || "[Uploaded files]",
+      files: uploadedFiles.map(f => f.name),
     };
     
     // Update messages in current conversation
@@ -183,9 +207,11 @@ export default function Chat() {
     }));
     
     setLoading(true);
+    const filesToSend = uploadedFiles;
+    setUploadedFiles([]);
 
     try {
-      const data = await api.chat(question);
+      const data = await api.chatWithFiles(question, filesToSend);
       const assistantMsg = {
         id: Date.now() + 1,
         role: "assistant",
@@ -427,6 +453,23 @@ export default function Chat() {
 
       {/* Input - Fixed at Bottom */}
       <div className="bg-white dark:bg-gray-100 border-t border-gray-200 dark:border-gray-300 px-6 py-4 flex-shrink-0">
+        {/* Uploaded Files Preview */}
+        {uploadedFiles.length > 0 && (
+          <div className="mb-3 flex flex-wrap gap-2">
+            {uploadedFiles.map((file, idx) => (
+              <div key={idx} className="flex items-center gap-2 bg-blue-50 dark:bg-blue-100 border border-blue-200 px-3 py-1.5 rounded-lg text-sm">
+                <span className="text-blue-700">📎 {file.name}</span>
+                <button
+                  onClick={() => removeFile(idx)}
+                  className="text-blue-400 hover:text-red-600 transition-colors"
+                  title="Remove file"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
         <div className="flex gap-3 items-end">
           <textarea
             ref={textareaRef}
@@ -443,6 +486,22 @@ export default function Chat() {
             }}
             disabled={loading}
           />
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept=".pdf,.txt,.doc,.docx,.md"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={loading}
+            className="bg-green-500 hover:bg-green-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-3 py-3 rounded-xl transition-colors font-medium text-sm flex items-center gap-1.5 min-w-[44px] justify-center"
+            title="Upload files"
+          >
+            📎
+          </button>
           <button
             onClick={handleVoiceInput}
             disabled={loading || recognizing || !(window.SpeechRecognition || window.webkitSpeechRecognition)}
@@ -457,7 +516,7 @@ export default function Chat() {
           </button>
           <button
             onClick={sendMessage}
-            disabled={!input.trim() || loading}
+            disabled={(!input.trim() && uploadedFiles.length === 0) || loading}
             className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-3 rounded-xl transition-colors font-medium text-sm flex items-center gap-1.5 min-w-[80px] justify-center"
           >
             {loading ? (

@@ -51,6 +51,21 @@ def load_pdf_file(filepath: str) -> str:
             return ""
 
 
+def load_docx_file(filepath: str) -> str:
+    """Load text from a DOCX file."""
+    try:
+        import docx
+        doc = docx.Document(filepath)
+        text = '\n'.join([para.text for para in doc.paragraphs])
+        return text
+    except ImportError:
+        logger.error("python-docx package not installed. Cannot read DOCX files.")
+        return "[DOCX support requires python-docx package]"
+    except Exception as e:
+        logger.error(f"Could not load DOCX {filepath}: {e}")
+        return ""
+
+
 def chunk_text(text: str, chunk_size: int = None, overlap: int = None) -> list[str]:
     """Split text into overlapping chunks."""
     chunk_size = chunk_size or Config.CHUNK_SIZE
@@ -82,7 +97,7 @@ def load_documents(knowledge_base_dir: str) -> list[dict]:
         return []
 
     documents = []
-    supported_extensions = {".txt", ".md", ".pdf"}
+    supported_extensions = {".txt", ".md", ".pdf", ".doc", ".docx"}
 
     for filepath in kb_path.rglob("*"):
         if filepath.suffix.lower() not in supported_extensions:
@@ -92,6 +107,8 @@ def load_documents(knowledge_base_dir: str) -> list[dict]:
         try:
             if filepath.suffix.lower() == ".pdf":
                 text = load_pdf_file(str(filepath))
+            elif filepath.suffix.lower() in [".doc", ".docx"]:
+                text = load_docx_file(str(filepath))
             else:
                 text = load_text_file(str(filepath))
 
