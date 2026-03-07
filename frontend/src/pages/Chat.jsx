@@ -116,37 +116,115 @@ export default function Chat() {
   const textareaRef = useRef(null);
   const recognitionRef = useRef(null);
   const fileInputRef = useRef(null);
+  const recognitionTimeoutRef = useRef(null);
 
   // Voice recognition setup
   useEffect(() => {
-    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) return;
+    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+      console.log('Speech recognition not supported');
+      return;
+    }
+    
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     recognitionRef.current = new SpeechRecognition();
-    recognitionRef.current.continuous = false;
-    recognitionRef.current.interimResults = false;
+    recognitionRef.current.continuous = true;
+    recognitionRef.current.interimResults = true;
     recognitionRef.current.lang = 'en-US';
+    recognitionRef.current.maxAlternatives = 1;
+    
+    recognitionRef.current.onstart = () => {
+      console.log('Speech recognition started');
+      setRecognizing(true);
+    };
+    
     recognitionRef.current.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      setInput(transcript);
-      setRecognizing(false);
-      textareaRef.current?.focus();
+      console.log('Speech recognition result received');
+      let finalTranscript = '';
+      let interimTranscript = '';
+      
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript + ' ';
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+      
+      if (finalTranscript) {
+        setInput(prev => prev + finalTranscript);
+      }
     };
-    recognitionRef.current.onerror = () => {
+    
+    recognitionRef.current.onerror = (event) => {
+      console.error('Speech recognition error:', event.error);
+      if (event.error === 'no-speech') {
+        console.log('No speech detected, keeping microphone active');
+        // Don't stop on no-speech, let it keep listening
+        return;
+      }
+      if (event.error === 'aborted') {
+        console.log('Speech recognition aborted');
+        return;
+      }
       setRecognizing(false);
+      if (recognitionTimeoutRef.current) {
+        clearTimeout(recognitionTimeoutRef.current);
+      }
     };
+    
     recognitionRef.current.onend = () => {
-      setRecognizing(false);
+      console.log('Speech recognition ended');
+      // Only set recognizing to false if we're not manually stopping it
+      if (recognizing) {
+        setRecognizing(false);
+      }
+      if (recognitionTimeoutRef.current) {
+        clearTimeout(recognitionTimeoutRef.current);
+      }
+    };
+    
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      if (recognitionTimeoutRef.current) {
+        clearTimeout(recognitionTimeoutRef.current);
+      }
     };
   }, []);
 
   const handleVoiceInput = () => {
-    if (!recognitionRef.current) return;
+    if (!recognitionRef.current) {
+      console.error('Speech recognition not initialized');
+      return;
+    }
+    
     if (recognizing) {
+      console.log('Stopping speech recognition');
       recognitionRef.current.stop();
       setRecognizing(false);
+      if (recognitionTimeoutRef.current) {
+        clearTimeout(recognitionTimeoutRef.current);
+      }
     } else {
+      console.log('Starting speech recognition');
       setRecognizing(true);
-      recognitionRef.current.start();
+      try {
+        recognitionRef.current.start();
+        
+        // Auto-stop after 30 seconds
+        recognitionTimeoutRef.current = setTimeout(() => {
+          if (recognitionRef.current) {
+            console.log('Auto-stopping recognition after timeout');
+            recognitionRef.current.stop();
+            setRecognizing(false);
+          }
+        }, 30000);
+      } catch (error) {
+        console.error('Error starting recognition:', error);
+        setRecognizing(false);
+      }
     }
   };
 
@@ -504,14 +582,14 @@ export default function Chat() {
           </button>
           <button
             onClick={handleVoiceInput}
-            disabled={loading || recognizing || !(window.SpeechRecognition || window.webkitSpeechRecognition)}
-            className={`bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-3 py-3 rounded-xl transition-colors font-medium text-sm flex items-center gap-1.5 min-w-[44px] justify-center ${recognizing ? 'animate-pulse' : ''}`}
-            title="Speak"
+            disabled={loading || !(window.SpeechRecognition || window.webkitSpeechRecognition)}
+            className={`bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-3 py-3 rounded-xl transition-colors font-medium text-sm flex items-center gap-1.5 justify-center ${recognizing ? 'animate-pulse bg-red-500 hover:bg-red-600' : ''}`}
+            title={recognizing ? "Click to stop recording" : "Click to start voice input"}
           >
             {recognizing ? (
-              <span className="flex items-center gap-1">🎤 Listening...</span>
+              <span className="flex items-center gap-1 whitespace-nowrap">🎤 Stop</span>
             ) : (
-              <span className="flex items-center gap-1">🎤 Voice</span>
+              <span className="flex items-center gap-1 whitespace-nowrap">🎤</span>
             )}
           </button>
           <button
