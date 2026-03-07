@@ -112,6 +112,7 @@ export default function Chat() {
   const [showSidebar, setShowSidebar] = useState(false);
   const [recognizing, setRecognizing] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [interimTranscript, setInterimTranscript] = useState("");
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
   const recognitionRef = useRef(null);
@@ -141,37 +142,30 @@ export default function Chat() {
     recognitionRef.current.onresult = (event) => {
       console.log('Speech recognition result received');
       let finalTranscript = '';
-      let interimTranscript = '';
+      let interim = '';
       
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript;
         if (event.results[i].isFinal) {
           finalTranscript += transcript + ' ';
         } else {
-          interimTranscript += transcript;
+          interim += transcript;
         }
       }
       
-      // Store interim transcript for later use
-      interimTranscriptRef.current = interimTranscript;
-      
-      // Update input with both final and interim results
+      // Update input with final results and clear interim
       if (finalTranscript) {
-        setInput(prev => {
-          const newValue = prev + finalTranscript;
-          console.log('Adding final transcript:', finalTranscript);
-          return newValue;
-        });
-        // Clear interim after final is added
+        console.log('Adding final transcript:', finalTranscript);
+        setInput(prev => prev + finalTranscript);
+        setInterimTranscript('');
         interimTranscriptRef.current = '';
       }
       
-      // Show interim results in real-time
-      if (interimTranscript) {
-        console.log('Interim transcript:', interimTranscript);
-        // We'll display the interim text by combining with existing input
-        const currentInput = input;
-        textareaRef.current.value = currentInput + interimTranscript;
+      // Update interim transcript state for display
+      if (interim) {
+        console.log('Interim transcript:', interim);
+        setInterimTranscript(interim);
+        interimTranscriptRef.current = interim;
       }
     };
     
@@ -236,6 +230,7 @@ export default function Chat() {
         console.log('Saving final interim transcript on end:', interimTranscriptRef.current);
         setInput(prev => prev + interimTranscriptRef.current + ' ');
         interimTranscriptRef.current = '';
+        setInterimTranscript('');
       }
       
       // Only set recognizing to false if we're not manually stopping it
@@ -272,6 +267,7 @@ export default function Chat() {
         console.log('Saving interim transcript:', interimTranscriptRef.current);
         setInput(prev => prev + interimTranscriptRef.current + ' ');
         interimTranscriptRef.current = '';
+        setInterimTranscript('');
       }
       
       recognitionRef.current.stop();
@@ -290,6 +286,7 @@ export default function Chat() {
       setRecognizing(true);
       setError(''); // Clear any previous errors
       interimTranscriptRef.current = ''; // Clear any previous interim transcript
+      setInterimTranscript(''); // Clear interim transcript state
       
       try {
         recognitionRef.current.start();
@@ -304,6 +301,7 @@ export default function Chat() {
               console.log('Saving interim transcript on auto-stop:', interimTranscriptRef.current);
               setInput(prev => prev + interimTranscriptRef.current + ' ');
               interimTranscriptRef.current = '';
+              setInterimTranscript('');
             }
             
             recognitionRef.current.stop();
@@ -640,7 +638,7 @@ export default function Chat() {
         <div className="flex gap-3 items-end">
           <textarea
             ref={textareaRef}
-            value={input}
+            value={input + interimTranscript}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask about course materials... (Enter to send, Shift+Enter for new line)"
