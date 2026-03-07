@@ -95,6 +95,41 @@ export default function Chat() {
     return data.activeId || data.conversations[0]?.id;
   });
   const [input, setInput] = useState("");
+  const [recognizing, setRecognizing] = useState(false);
+  const recognitionRef = useRef(null);
+
+  // Voice recognition setup
+  useEffect(() => {
+    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) return;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognitionRef.current = new SpeechRecognition();
+    recognitionRef.current.continuous = false;
+    recognitionRef.current.interimResults = false;
+    recognitionRef.current.lang = 'en-US';
+    recognitionRef.current.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(transcript);
+      setRecognizing(false);
+      textareaRef.current?.focus();
+    };
+    recognitionRef.current.onerror = () => {
+      setRecognizing(false);
+    };
+    recognitionRef.current.onend = () => {
+      setRecognizing(false);
+    };
+  }, []);
+
+  const handleVoiceInput = () => {
+    if (!recognitionRef.current) return;
+    if (recognizing) {
+      recognitionRef.current.stop();
+      setRecognizing(false);
+    } else {
+      setRecognizing(true);
+      recognitionRef.current.start();
+    }
+  };
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showSidebar, setShowSidebar] = useState(false);
@@ -408,6 +443,18 @@ export default function Chat() {
             }}
             disabled={loading}
           />
+          <button
+            onClick={handleVoiceInput}
+            disabled={loading || recognizing || !(window.SpeechRecognition || window.webkitSpeechRecognition)}
+            className={`bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-3 py-3 rounded-xl transition-colors font-medium text-sm flex items-center gap-1.5 min-w-[44px] justify-center ${recognizing ? 'animate-pulse' : ''}`}
+            title="Speak"
+          >
+            {recognizing ? (
+              <span className="flex items-center gap-1">🎤 Listening...</span>
+            ) : (
+              <span className="flex items-center gap-1">🎤 Voice</span>
+            )}
+          </button>
           <button
             onClick={sendMessage}
             disabled={!input.trim() || loading}
