@@ -158,15 +158,51 @@ export default function Chat() {
     
     recognitionRef.current.onerror = (event) => {
       console.error('Speech recognition error:', event.error);
+      
+      // Handle specific error types
       if (event.error === 'no-speech') {
         console.log('No speech detected, keeping microphone active');
         // Don't stop on no-speech, let it keep listening
         return;
       }
+      
       if (event.error === 'aborted') {
         console.log('Speech recognition aborted');
         return;
       }
+      
+      // Handle network errors
+      if (event.error === 'network') {
+        setError('Network error: Unable to connect to speech service. Please check your internet connection.');
+        setRecognizing(false);
+        if (recognitionTimeoutRef.current) {
+          clearTimeout(recognitionTimeoutRef.current);
+        }
+        return;
+      }
+      
+      // Handle audio-capture errors (microphone issues)
+      if (event.error === 'audio-capture') {
+        setError('Microphone error: Please check if your microphone is connected and allowed in browser settings.');
+        setRecognizing(false);
+        if (recognitionTimeoutRef.current) {
+          clearTimeout(recognitionTimeoutRef.current);
+        }
+        return;
+      }
+      
+      // Handle not-allowed errors (permission denied)
+      if (event.error === 'not-allowed') {
+        setError('Microphone access denied. Please allow microphone permission in your browser settings.');
+        setRecognizing(false);
+        if (recognitionTimeoutRef.current) {
+          clearTimeout(recognitionTimeoutRef.current);
+        }
+        return;
+      }
+      
+      // Generic error handling
+      setError(`Voice recognition error: ${event.error}. Please try again.`);
       setRecognizing(false);
       if (recognitionTimeoutRef.current) {
         clearTimeout(recognitionTimeoutRef.current);
@@ -197,6 +233,7 @@ export default function Chat() {
   const handleVoiceInput = () => {
     if (!recognitionRef.current) {
       console.error('Speech recognition not initialized');
+      setError('Voice recognition is not available in this browser. Please use Chrome or Edge.');
       return;
     }
     
@@ -208,8 +245,16 @@ export default function Chat() {
         clearTimeout(recognitionTimeoutRef.current);
       }
     } else {
+      // Check if online
+      if (!navigator.onLine) {
+        setError('You are offline. Voice recognition requires an internet connection.');
+        return;
+      }
+      
       console.log('Starting speech recognition');
       setRecognizing(true);
+      setError(''); // Clear any previous errors
+      
       try {
         recognitionRef.current.start();
         
@@ -584,7 +629,13 @@ export default function Chat() {
             onClick={handleVoiceInput}
             disabled={loading || !(window.SpeechRecognition || window.webkitSpeechRecognition)}
             className={`bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-3 py-3 rounded-xl transition-colors font-medium text-sm flex items-center gap-1.5 justify-center ${recognizing ? 'animate-pulse bg-red-500 hover:bg-red-600' : ''}`}
-            title={recognizing ? "Click to stop recording" : "Click to start voice input"}
+            title={
+              !(window.SpeechRecognition || window.webkitSpeechRecognition)
+                ? "Voice input not supported in this browser. Use Chrome or Edge."
+                : recognizing 
+                  ? "Click to stop recording" 
+                  : "Click to start voice input (requires internet connection)"
+            }
           >
             {recognizing ? (
               <span className="flex items-center gap-1 whitespace-nowrap">🎤 Stop</span>
