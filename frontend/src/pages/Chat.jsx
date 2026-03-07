@@ -117,6 +117,7 @@ export default function Chat() {
   const recognitionRef = useRef(null);
   const fileInputRef = useRef(null);
   const recognitionTimeoutRef = useRef(null);
+  const interimTranscriptRef = useRef('');
 
   // Voice recognition setup
   useEffect(() => {
@@ -151,8 +152,26 @@ export default function Chat() {
         }
       }
       
+      // Store interim transcript for later use
+      interimTranscriptRef.current = interimTranscript;
+      
+      // Update input with both final and interim results
       if (finalTranscript) {
-        setInput(prev => prev + finalTranscript);
+        setInput(prev => {
+          const newValue = prev + finalTranscript;
+          console.log('Adding final transcript:', finalTranscript);
+          return newValue;
+        });
+        // Clear interim after final is added
+        interimTranscriptRef.current = '';
+      }
+      
+      // Show interim results in real-time
+      if (interimTranscript) {
+        console.log('Interim transcript:', interimTranscript);
+        // We'll display the interim text by combining with existing input
+        const currentInput = input;
+        textareaRef.current.value = currentInput + interimTranscript;
       }
     };
     
@@ -211,6 +230,14 @@ export default function Chat() {
     
     recognitionRef.current.onend = () => {
       console.log('Speech recognition ended');
+      
+      // Save any remaining interim transcript when ending
+      if (interimTranscriptRef.current) {
+        console.log('Saving final interim transcript on end:', interimTranscriptRef.current);
+        setInput(prev => prev + interimTranscriptRef.current + ' ');
+        interimTranscriptRef.current = '';
+      }
+      
       // Only set recognizing to false if we're not manually stopping it
       if (recognizing) {
         setRecognizing(false);
@@ -239,6 +266,14 @@ export default function Chat() {
     
     if (recognizing) {
       console.log('Stopping speech recognition');
+      
+      // Save any remaining interim transcript before stopping
+      if (interimTranscriptRef.current) {
+        console.log('Saving interim transcript:', interimTranscriptRef.current);
+        setInput(prev => prev + interimTranscriptRef.current + ' ');
+        interimTranscriptRef.current = '';
+      }
+      
       recognitionRef.current.stop();
       setRecognizing(false);
       if (recognitionTimeoutRef.current) {
@@ -254,6 +289,7 @@ export default function Chat() {
       console.log('Starting speech recognition');
       setRecognizing(true);
       setError(''); // Clear any previous errors
+      interimTranscriptRef.current = ''; // Clear any previous interim transcript
       
       try {
         recognitionRef.current.start();
@@ -262,6 +298,14 @@ export default function Chat() {
         recognitionTimeoutRef.current = setTimeout(() => {
           if (recognitionRef.current) {
             console.log('Auto-stopping recognition after timeout');
+            
+            // Save any remaining interim transcript before auto-stopping
+            if (interimTranscriptRef.current) {
+              console.log('Saving interim transcript on auto-stop:', interimTranscriptRef.current);
+              setInput(prev => prev + interimTranscriptRef.current + ' ');
+              interimTranscriptRef.current = '';
+            }
+            
             recognitionRef.current.stop();
             setRecognizing(false);
           }
