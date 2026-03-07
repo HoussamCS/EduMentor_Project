@@ -23,6 +23,57 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def extract_text_from_uploaded_file(filepath):
+    """Extract text from uploaded file without ChromaDB dependencies."""
+    ext = filepath.rsplit('.', 1)[1].lower()
+    
+    try:
+        # Plain text and markdown files
+        if ext in ['txt', 'md']:
+            with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                return f.read()
+        
+        # PDF files
+        elif ext == 'pdf':
+            try:
+                import PyPDF2
+                with open(filepath, 'rb') as f:
+                    reader = PyPDF2.PdfReader(f)
+                    text = ''
+                    for page in reader.pages:
+                        page_text = page.extract_text()
+                        if page_text:
+                            text += page_text + '\n'
+                    return text
+            except ImportError:
+                logger.error("PyPDF2 not installed")
+                return "[PDF support requires PyPDF2 package]"
+            except Exception as e:
+                logger.error(f"Error reading PDF {filepath}: {e}")
+                return f"[Error reading PDF: {str(e)}]"
+        
+        # DOCX files
+        elif ext in ['doc', 'docx']:
+            try:
+                import docx
+                doc = docx.Document(filepath)
+                text = '\n'.join([para.text for para in doc.paragraphs])
+                return text
+            except ImportError:
+                logger.error("python-docx not installed")
+                return "[DOCX support requires python-docx package]"
+            except Exception as e:
+                logger.error(f"Error reading DOCX {filepath}: {e}")
+                return f"[Error reading DOCX: {str(e)}]"
+        
+        else:
+            return "[Unsupported file format]"
+            
+    except Exception as e:
+        logger.error(f"Error extracting text from {filepath}: {e}")
+        return f"[Error reading file: {str(e)}]"
+
+
 def get_llm_answer(system_prompt: str, user_prompt: str) -> str:
     """Call LLM with system + user prompts."""
     from config import Config
@@ -61,35 +112,30 @@ def chat():
         file_sources = []
         
         if uploaded_files:
-            from rag.ingest import load_text_file, load_pdf_file, load_docx_file
-            
             for file in uploaded_files:
                 if file and allowed_file(file.filename):
                     filename = secure_filename(file.filename)
                     filepath = os.path.join(UPLOAD_FOLDER, filename)
-                    file.save(filepath)
                     
-                    # Extract text using existing functions
                     try:
-                        ext = filename.rsplit('.', 1)[1].lower()
-                        if ext == 'pdf':
-                            text = load_pdf_file(filepath)
-                        elif ext in ['doc', 'docx']:
-                            text = load_docx_file(filepath)
-                        else:  # txt, md
-                            text = load_text_file(filepath)
+                        file.save(filepath)
                         
+                        # Extract text using standalone function
+                        text = extract_text_from_uploaded_file(filepath)
                         file_context += f"\n\n--- Content from {filename} ---\n{text}\n"
                         file_sources.append(filename)
+                        
                     except Exception as e:
                         logger.error(f"Error processing {filename}: {e}")
                         file_context += f"\n\n--- Error reading {filename}: {str(e)} ---\n"
                     
-                    # Clean up uploaded file
-                    try:
-                        os.remove(filepath)
-                    except:
-                        pass
+                    finally:
+                        # Clean up uploaded file
+                        try:
+                            if os.path.exists(filepath):
+                                os.remove(filepath)
+                        except Exception as e:
+                            logger.warning(f"Could not delete temp file {filepath}: {e}")
         
         # Validate question
         if not question and not file_context:

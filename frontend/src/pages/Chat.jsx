@@ -107,8 +107,13 @@ export default function Chat() {
     return data.activeId || data.conversations[0]?.id;
   });
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showSidebar, setShowSidebar] = useState(false);
   const [recognizing, setRecognizing] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const messagesEndRef = useRef(null);
+  const textareaRef = useRef(null);
   const recognitionRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -144,11 +149,6 @@ export default function Chat() {
       recognitionRef.current.start();
     }
   };
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [showSidebar, setShowSidebar] = useState(false);
-  const messagesEndRef = useRef(null);
-  const textareaRef = useRef(null);
 
   // Get current conversation
   const currentConversation = conversationsData.conversations.find(
