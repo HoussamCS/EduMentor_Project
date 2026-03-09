@@ -187,7 +187,7 @@ function MainApp() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-3 px-10 py-3 text-lg font-semibold border-b-[3px] transition-colors ${
+                className={`flex items-center gap-3 px-10 py-2 text-lg font-semibold border-b-[3px] transition-colors ${
                   activeTab === tab.id
                     ? darkMode ? "border-indigo-400 text-indigo-400" : "border-indigo-600 text-indigo-600"
                     : darkMode
