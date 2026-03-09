@@ -182,12 +182,12 @@ function MainApp() {
           </div>
 
           {/* Tabs */}
-          <nav className={`flex justify-center gap-10 ${darkMode ? "bg-gray-800/60" : "bg-white"}`}>
+          <nav className={`flex justify-center gap-16 ${darkMode ? "bg-gray-800/60" : "bg-white"}`}>
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-3 px-8 py-3 text-lg font-semibold border-b-[3px] transition-colors ${
+                className={`flex items-center gap-3 px-10 py-3 text-lg font-semibold border-b-[3px] transition-colors ${
                   activeTab === tab.id
                     ? darkMode ? "border-indigo-400 text-indigo-400" : "border-indigo-600 text-indigo-600"
                     : darkMode
