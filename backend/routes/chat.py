@@ -1,6 +1,6 @@
 """
 Chat Route — RAG-based Q&A Chatbot
-POST /api/chat
+POST /api/chat — Process chat messages using RAG
 """
 
 import logging
