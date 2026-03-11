@@ -7,7 +7,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    # Enable CORS for React frontend
+    # Enable CORS for React frontend application
     CORS(app, origins=Config.CORS_ORIGINS.split(","))
 
     # Register blueprints
