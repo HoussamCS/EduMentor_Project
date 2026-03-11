@@ -9,6 +9,7 @@ from datetime import datetime
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "user_data")
 
+
 # Create data directory if it doesn't exist
 if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
