@@ -1,7 +1,7 @@
 """
 AI Agent for Smart Recommendations
 Triggered when a student is flagged as High Risk.
-Combines ML predictions with LLM to generate personalized recommendations and quizzes.
+Combines ML predictions with LLM to generate personalized recommendations and adaptive quizzes.
 """
 
 import os
